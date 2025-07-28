@@ -1,35 +1,20 @@
 import { Router } from "express";
+import {
+  getAllCostings,
+  getCostingById,
+  createCosting,
+  updateCosting,
+  deleteCosting,
+  getCostingsByUserId,
+} from "../controllers/costing.controller.js";
 
 const costingRouter = Router();
 
-// GET all costing
-costingRouter.get("/", (req, res) => {
-  res.send({ title: "GET all costing" });
-});
-
-// GET costing by id
-costingRouter.get("/:id", (req, res) => {
-  res.send({ title: "GET costing" });
-});
-
-// CREATE costing
-costingRouter.post("/", (req, res) => {
-  res.send({ title: "CREATE new costing" });
-});
-
-// UPDATE costing by id
-costingRouter.put("/:id", (req, res) => {
-  res.send({ title: "UPDATE costing" });
-});
-
-// DELETE costing by id
-costingRouter.delete("/:id", (req, res) => {
-  res.send({ title: "DELETE costing" });
-});
-
-// GET costing for specific user
-costingRouter.get("/user/:id", (req, res) => {
-  res.send({ title: "DELETE costing" });
-});
+costingRouter.get("/", getAllCostings);
+costingRouter.get("/:id", getCostingById);
+costingRouter.post("/", createCosting);
+costingRouter.put("/:id", updateCosting);
+costingRouter.delete("/:id", deleteCosting);
+costingRouter.get("/user/:id", getCostingsByUserId); // Make sure this route comes after "/", to avoid route conflicts
 
 export default costingRouter;

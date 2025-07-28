@@ -13,7 +13,7 @@ const serviceUsedSchema = new mongoose.Schema({
     required: true,
     min: 0,
   },
-  rate: {
+  hourlyRate: {
     type: Number,
     required: true,
     min: 0,
@@ -61,14 +61,12 @@ const costingSchema = new mongoose.Schema(
 // Auto-calculate total before saving
 costingSchema.pre("save", async function (next) {
   let total = 0;
-  for (const item of this.items) {
-    const service = await mongoose
-      .model("ServiceItem")
-      .findById(item.serviceItem);
+  for (const item of this.servicesUsed) {
+    const service = await mongoose.model("ServiceItem").findById(item.service);
     if (!service) throw new Error("Invalid Service Item");
-    total += service.rate * item.hours;
+    total += service.hourlyRate * item.hours;
   }
-  this.total = total;
+  this.totalAmount = total;
   next();
 });
 

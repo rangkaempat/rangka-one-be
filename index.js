@@ -11,6 +11,8 @@ import costingRouter from "./routes/costing.routes.js";
 import connectDatabase from "./database/mongodb.js";
 import serviceItemRouter from "./routes/serviceItem.routes.js";
 import errorMiddleware from "./middlewares/error.middleware.js";
+import { generalLimiter } from "./middlewares/rateLimiter.middleware.js";
+import adminRouter from "./routes/admin.routes.js";
 
 const app = express();
 
@@ -24,12 +26,14 @@ app.use(
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(generalLimiter); // Global rate limiter
 
 // Routes
 app.use("/api/auth", authRouter);
-app.use("/api/user", userRouter);
+app.use("/api/users", userRouter);
 app.use("/api/costing", costingRouter);
 app.use("/api/services", serviceItemRouter);
+app.use("/api/admin", adminRouter);
 
 // Middlewares
 app.use(errorMiddleware);

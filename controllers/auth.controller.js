@@ -9,6 +9,9 @@ import jwt from "jsonwebtoken";
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN;
 
+// =============================
+// REGISTER NEW USER
+// =============================
 export const register = async (req, res, next) => {
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -61,6 +64,9 @@ export const register = async (req, res, next) => {
   }
 };
 
+// =============================
+// LOGIN USER
+// =============================
 export const login = async (req, res, next) => {
   try {
     // Receive request from client
@@ -104,6 +110,22 @@ export const login = async (req, res, next) => {
   }
 };
 
+// =============================
+// LOGOUT USER
+// =============================
 export const logout = async (req, res, next) => {
-  // Implement logout logic
+  try {
+    // TODO:
+    // Since JWT is stateless, the server doesn't store sessions.
+    // To "logout", the client deletes the token from storage (e.g., localStorage/cookies).
+    // Optionally, implement token blacklisting if needed for higher security.
+
+    res.status(200).json({
+      success: true,
+      message:
+        "User logged out successfully. Please clear your token from client-side storage.",
+    });
+  } catch (error) {
+    next(error);
+  }
 };

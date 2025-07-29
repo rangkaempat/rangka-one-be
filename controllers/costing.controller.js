@@ -59,12 +59,13 @@ export const getCostingsByUserId = async (req, res, next) => {
 export const createCosting = async (req, res) => {
   try {
     const {
-      createdBy,
       projectName,
       clientName,
       notes = "",
       servicesUsed: rawServices,
     } = req.body;
+
+    const createdBy = req.user._id;
 
     // Validate presence of essential fields
     if (

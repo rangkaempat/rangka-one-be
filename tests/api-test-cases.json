@@ -1,0 +1,103 @@
+{
+  "/api/users": {
+    "GET /": {
+      "description": "Get all users (Admin only)",
+      "requiresAuth": true,
+      "roles": ["admin"]
+    },
+    "GET /:id": {
+      "description": "Get specific user (Admin and User only)",
+      "requiresAuth": true,
+      "roles": ["admin", "user"]
+    },
+    "POST /": {
+      "description": "Create a new user (Public)",
+      "requiresAuth": false,
+      "roles": []
+    },
+    "PUT /:id": {
+      "description": "Update user (Admin and User only)",
+      "requiresAuth": true,
+      "roles": ["admin", "user"]
+    },
+    "DELETE /:id": {
+      "description": "Delete user (Admin and User only)",
+      "requiresAuth": true,
+      "roles": ["admin", "user"]
+    }
+  },
+
+  "/api/auth": {
+    "POST /register": {
+      "description": "Register a new user",
+      "requiresAuth": false,
+      "roles": []
+    },
+    "POST /login": {
+      "description": "Login user",
+      "requiresAuth": false,
+      "roles": []
+    },
+    "POST /logout": {
+      "description": "Logout user",
+      "requiresAuth": false,
+      "roles": []
+    }
+  },
+
+  "/api/services": {
+    "GET /": {
+      "description": "Get all service items (All users)",
+      "requiresAuth": true,
+      "roles": ["admin", "user"]
+    },
+    "POST /": {
+      "description": "Create service item (Admin only)",
+      "requiresAuth": true,
+      "roles": ["admin"]
+    },
+    "PUT /:id": {
+      "description": "Update service item (Admin only)",
+      "requiresAuth": true,
+      "roles": ["admin"]
+    },
+    "DELETE /:id": {
+      "description": "Delete service item (Admin only)",
+      "requiresAuth": true,
+      "roles": ["admin"]
+    }
+  },
+
+  "/api/costing": {
+    "GET /": {
+      "description": "Get all costings (All users)",
+      "requiresAuth": true,
+      "roles": ["admin", "user"]
+    },
+    "GET /:id": {
+      "description": "Get costing by ID (All users)",
+      "requiresAuth": true,
+      "roles": ["admin", "user"]
+    },
+    "POST /": {
+      "description": "Create new costing (All users)",
+      "requiresAuth": true,
+      "roles": ["admin", "user"]
+    },
+    "PUT /:id": {
+      "description": "Update costing (All users)",
+      "requiresAuth": true,
+      "roles": ["admin", "user"]
+    },
+    "DELETE /:id": {
+      "description": "Delete costing (All users)",
+      "requiresAuth": true,
+      "roles": ["admin", "user"]
+    },
+    "GET /users/:id": {
+      "description": "Get all costings by User ID (All users)",
+      "requiresAuth": true,
+      "roles": ["admin", "user"]
+    }
+  }
+}

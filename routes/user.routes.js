@@ -1,30 +1,22 @@
 import { Router } from "express";
+import {
+  createUser,
+  deleteUser,
+  getUser,
+  getUsers,
+  updateUser,
+} from "../controllers/user.controller.js";
+import authorize from "../middlewares/auth.middleware.js";
+import authorizeAdmin from "../middlewares/authAdmin.middleware.js";
+import authorizeSelfOrAdmin from "../middlewares/authSelfOrAdmin.js";
 
 const userRouter = Router();
 
-// GET all users
-userRouter.get("/", (req, res) => {
-  res.send({ title: "GET all users" });
-});
-
-// GET user
-userRouter.get("/:id", (req, res) => {
-  res.send({ title: "GET user" });
-});
-
-// CREATE user
-userRouter.post("/", (req, res) => {
-  res.send({ title: "CREATE new user" });
-});
-
-// UPDATE user
-userRouter.put("/:id", (req, res) => {
-  res.send({ title: "UPDATE user" });
-});
-
-// DELETE user
-userRouter.delete("/:id", (req, res) => {
-  res.send({ title: "DELETE user" });
-});
+// /api/users
+userRouter.get("/", authorize, authorizeAdmin, getUsers); // Admin Only
+userRouter.get("/:id", authorize, authorizeSelfOrAdmin, getUser); // Self or Admin Only
+userRouter.post("/", createUser); // Public
+userRouter.put("/:id", authorize, authorizeSelfOrAdmin, updateUser); // Self or Admin Only
+userRouter.delete("/:id", authorize, authorizeSelfOrAdmin, deleteUser); // Self or Admin Only
 
 export default userRouter;

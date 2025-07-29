@@ -4,6 +4,20 @@ This document serves as a concise overview of all backend routes, their access l
 
 ---
 
+## 📚 Table of Contents
+
+- [📦 API Routes \& Middleware Overview](#-api-routes--middleware-overview)
+  - [📚 Table of Contents](#-table-of-contents)
+  - [🧩 Middleware Access Control](#-middleware-access-control)
+  - [✅ Best Practices](#-best-practices)
+  - [🧑‍💻 Authentication Routes](#-authentication-routes)
+  - [👤 User Routes](#-user-routes)
+  - [💰 Costing Routes](#-costing-routes)
+  - [🛠️ Service Items Routes](#️-service-items-routes)
+  - [🛡️ Admin-Only Routes](#️-admin-only-routes)
+
+---
+
 ## 🧩 Middleware Access Control
 
 | Middleware                     | Purpose                                | Usage Example                             |

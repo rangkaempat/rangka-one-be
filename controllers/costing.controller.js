@@ -115,6 +115,8 @@ export const createCosting = async (req, res) => {
 
       servicesUsed.push({
         service: item.service,
+        name: serviceData.name,
+        description: serviceData.description,
         hours: item.hours,
         hourlyRate,
         subtotal,

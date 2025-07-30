@@ -208,17 +208,17 @@
     "Authorization": "Bearer <USER_TOKEN>"
   },
   "body": {
-    "projectName": "Website Revamp",
-    "clientName": "Client A",
-    "notes": "Urgent deadline",
+    "projectName": "Rebranding Website",
+    "clientName": "Hyrax Oil",
+    "notes": "Testing Out",
     "servicesUsed": [
       {
-        "service": "<SERVICE_ID_1>",
-        "hours": 20
+        "service": "6887a2db8f9c02ee043cdd6c",
+        "hours": 30
       },
       {
-        "service": "<SERVICE_ID_2>",
-        "hours": 10
+        "service": "6887a7b08f9c02ee043cdd73",
+        "hours": 15
       }
     ]
   }

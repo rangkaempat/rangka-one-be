@@ -35,7 +35,7 @@ app.use("/api/costing", costingRouter);
 app.use("/api/services", serviceItemRouter);
 app.use("/api/admin", adminRouter);
 
-// Middlewares
+// Global Error Middlewares must be after Routes
 app.use(errorMiddleware);
 
 // Start Server

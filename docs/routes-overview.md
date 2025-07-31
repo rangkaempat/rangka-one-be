@@ -20,12 +20,12 @@ This document serves as a concise overview of all backend routes, their access l
 
 ## 🧩 Middleware Access Control
 
-| Middleware                     | Purpose                                | Usage Example                             |
-| ------------------------------ | -------------------------------------- | ----------------------------------------- |
-| `authorize`                    | Any authenticated user (via JWT)       | All protected routes                      |
-| `authorizeAdmin`               | Only for users with `role === 'admin'` | Admin routes (user list, service control) |
-| `authorizeSelfOrAdmin`         | Only the user themselves, or an admin  | Routes like `GET/PUT/DELETE /users/:id`   |
-| `authorizeCostingOwnerOrAdmin` | Only the costing owner, or an admin    | Routes like `GET/PUT/DELETE /costing/:id` |
+| Middleware                     | Purpose                                         | Usage Example                                                |
+| ------------------------------ | ----------------------------------------------- | ------------------------------------------------------------ |
+| `authorize`                    | Any authenticated/logged in user (via JWT)      | All protected routes                                         |
+| `authorizeAdmin`               | Only for users with `role === 'admin'`          | Admin routes (`GET /users`, `POST/PUT/DELETE /services/:id`) |
+| `authorizeSelfOrAdmin`         | Only the logged in user themselves, or an admin | Routes like `GET/PUT/DELETE /users/:id`                      |
+| `authorizeCostingOwnerOrAdmin` | Only the costing owner, or an admin             | Routes like `GET/PUT/DELETE /costing/:id`                    |
 
 ---
 
@@ -33,6 +33,7 @@ This document serves as a concise overview of all backend routes, their access l
 
 - Always apply `authorize` before any role-based middleware.
 - Use `authorizeSelfOrAdmin` for routes where users should only see/edit their own data unless they’re an admin.
+- Use `authorizeCostingOwnerOrAdmin` for routes where users should only see/edit only the costings they have created unless they're an admin.
 - Consider future roles (e.g., `manager`, `editor`) by making middleware easily extendable.
 
 ---

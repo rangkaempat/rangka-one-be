@@ -105,6 +105,8 @@ export const login = async (req, res, next) => {
         user,
       },
     });
+
+    console.log(`User ${email} has just logged in.`);
   } catch (error) {
     next(error);
   }
@@ -120,11 +122,15 @@ export const logout = async (req, res, next) => {
     // To "logout", the client deletes the token from storage (e.g., localStorage/cookies).
     // Optionally, implement token blacklisting if needed for higher security.
 
+    const { userData } = req.body;
+
     res.status(200).json({
       success: true,
       message:
         "User logged out successfully. Please clear your token from client-side storage.",
     });
+
+    console.log(`User ${userData.email} just logged out.`);
   } catch (error) {
     next(error);
   }

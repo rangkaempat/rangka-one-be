@@ -62,6 +62,8 @@ A backend system for managing project costings at Rangka Empat Studio. Allows au
 
    Create a `.env` file:
 
+   - Ensure `CLIENT_ORIGIN` does not have a trailing slash "/".
+
    ```env
    PORT=5000
    JWT_SECRET=your_secret_key
@@ -124,16 +126,16 @@ src/
 
 ## ⚙️ Environment Variables
 
-| Variable         | Required | Description            |
-| ---------------- | -------- | ---------------------- |
-| `PORT`           | ✅       | Server port            |
-| `JWT_SECRET`     | ✅       | Your JWT Secret Key    |
-| `JWT_EXPIRES_IN` | ✅       | JWT Expiry             |
-| `DB_URI`         | ✅       | Your Database URI      |
-| `DB_PASSWORD`    | ✅       | Your Database Password |
-| `DB_NAME`        | ✅       | Your Database Name     |
-| `NODE_ENV`       | ✅       | Node Environment       |
-| `CLIENT_ORIGIN`  | ✅       | Front End URL          |
+| Variable         | Required | Description                                                               |
+| ---------------- | -------- | ------------------------------------------------------------------------- |
+| `PORT`           | ✅       | Server port                                                               |
+| `JWT_SECRET`     | ✅       | Your JWT Secret Key                                                       |
+| `JWT_EXPIRES_IN` | ✅       | JWT Expiry                                                                |
+| `DB_URI`         | ✅       | Your Database URI                                                         |
+| `DB_PASSWORD`    | ✅       | Your Database Password                                                    |
+| `DB_NAME`        | ✅       | Your Database Name                                                        |
+| `NODE_ENV`       | ✅       | Node Environment                                                          |
+| `CLIENT_ORIGIN`  | ✅       | Front End URL (Ensure `CLIENT_ORIGIN` does not have a trailing slash "/") |
 
 ---
 

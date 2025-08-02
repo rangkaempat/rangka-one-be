@@ -70,6 +70,7 @@ A backend system for managing project costings at Rangka Empat Studio. Allows au
    DB_PASSWORD=your_database_password
    DB_NAME=your_db_name
    NODE_ENV=development
+   CLIENT_ORIGIN=front_end_url
    ```
 
 4. **Start the development server**
@@ -132,6 +133,7 @@ src/
 | `DB_PASSWORD`    | ✅       | Your Database Password |
 | `DB_NAME`        | ✅       | Your Database Name     |
 | `NODE_ENV`       | ✅       | Node Environment       |
+| `CLIENT_ORIGIN`  | ✅       | Front End URL          |
 
 ---
 

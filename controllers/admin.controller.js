@@ -2,7 +2,12 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import User from "../models/user.model.js";
 
-// CREATE USER (Admin Only)
+// ADMIN ONLY
+
+// =============================
+// CREATE USER (name, email, password, role)
+// =============================
+// [POST] /api/admin/create-user
 export const createUserAsAdmin = async (req, res, next) => {
   const session = await mongoose.startSession();
   session.startTransaction();

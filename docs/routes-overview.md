@@ -69,7 +69,6 @@ User schema includes:
 | ------ | ----- | ------------------ | ----------------------------------- | --------------------------- |
 | GET    | /     | Admin Only         | `authorize`, `authorizeAdmin`       | Get all users               |
 | GET    | /\:id | Self or Admin Only | `authorize`, `authorizeSelfOrAdmin` | Get a specific user profile |
-| POST   | /     | Public             | None                                | Create a new user (public?) |
 | PUT    | /\:id | Self or Admin Only | `authorize`, `authorizeSelfOrAdmin` | Update a user profile       |
 | DELETE | /\:id | Self or Admin Only | `authorize`, `authorizeSelfOrAdmin` | Delete a user profile       |
 

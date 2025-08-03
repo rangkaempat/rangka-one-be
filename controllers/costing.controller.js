@@ -1,7 +1,10 @@
 import Costing from "../models/costing.model.js";
 import ServiceItem from "../models/serviceItem.model.js";
 
-// Get all costing
+// =============================
+//  GET ALL COSTINGS
+// =============================
+// [GET] /api/costing
 export const getAllCostings = async (req, res, next) => {
   try {
     const costing = await Costing.find().sort({ createdAt: -1 });
@@ -15,7 +18,10 @@ export const getAllCostings = async (req, res, next) => {
   }
 };
 
-// Get a single costing by ID
+// =============================
+//  GET COSTING BY ID
+// =============================
+// [GET] /api/costing/:ID
 export const getCostingById = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -37,7 +43,10 @@ export const getCostingById = async (req, res, next) => {
   }
 };
 
-// Get costing by user ID
+// =============================
+//  GET COSTING BY USER ID
+// =============================
+// [GET] /api/costing/users/:ID
 export const getCostingsByUserId = async (req, res, next) => {
   try {
     const { id: userId } = req.params;
@@ -55,9 +64,13 @@ export const getCostingsByUserId = async (req, res, next) => {
   }
 };
 
-// Create a new costing
+// =============================
+//  CREATE NEW COSTING
+// =============================
+// [POST] /api/costing
 export const createCosting = async (req, res) => {
   try {
+    // Initialize with data from request body
     const {
       projectName,
       clientName,
@@ -81,9 +94,11 @@ export const createCosting = async (req, res) => {
       });
     }
 
+    // Initialize totalAmount and servicesUsed array
     let totalAmount = 0;
     const servicesUsed = [];
 
+    // Validate each servicesUsed item
     for (const item of rawServices) {
       if (!item.service || typeof item.hours !== "number") {
         return res.status(400).json({
@@ -113,6 +128,7 @@ export const createCosting = async (req, res) => {
 
       totalAmount += subtotal;
 
+      // Insert servicesUsed fields with new data
       servicesUsed.push({
         service: item.service,
         name: serviceData.name,
@@ -123,6 +139,7 @@ export const createCosting = async (req, res) => {
       });
     }
 
+    // Insert costing fields to new data
     const newCosting = new Costing({
       createdBy,
       projectName,
@@ -132,6 +149,7 @@ export const createCosting = async (req, res) => {
       totalAmount,
     });
 
+    // Save to database
     await newCosting.save();
 
     res.status(201).json({
@@ -149,7 +167,10 @@ export const createCosting = async (req, res) => {
   }
 };
 
-// Update a costing
+// =============================
+//  UPDATE COSTING BY ID
+// =============================
+// [PUT] /api/costing/:ID
 export const updateCosting = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -176,7 +197,10 @@ export const updateCosting = async (req, res, next) => {
   }
 };
 
-// Delete a costing
+// =============================
+//  DELETE COSTING BY ID
+// =============================
+// [DELETE] /api/costing/:ID
 export const deleteCosting = async (req, res, next) => {
   try {
     const { id } = req.params;

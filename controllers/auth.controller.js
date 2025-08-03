@@ -10,8 +10,9 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN;
 
 // =============================
-// REGISTER NEW USER
+// REGISTER NEW USER (name, email, password)
 // =============================
+// [POST] /api/auth/register
 export const register = async (req, res, next) => {
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -20,7 +21,7 @@ export const register = async (req, res, next) => {
     // Receive request
     const { name, email, password } = req.body;
 
-    // Check if user already exists
+    // Check if user email already exists
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
@@ -65,8 +66,9 @@ export const register = async (req, res, next) => {
 };
 
 // =============================
-// LOGIN USER
+// LOGIN USER (email, password)
 // =============================
+// [POST] /api/auth/login
 export const login = async (req, res, next) => {
   try {
     // Receive request from client
@@ -113,15 +115,11 @@ export const login = async (req, res, next) => {
 };
 
 // =============================
-// LOGOUT USER
+// LOGOUT USER (All user details excluding password)
 // =============================
+// [POST] /api/auth/logout
 export const logout = async (req, res, next) => {
   try {
-    // TODO:
-    // Since JWT is stateless, the server doesn't store sessions.
-    // To "logout", the client deletes the token from storage (e.g., localStorage/cookies).
-    // Optionally, implement token blacklisting if needed for higher security.
-
     const { userData } = req.body;
 
     res.status(200).json({

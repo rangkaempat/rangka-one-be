@@ -1,9 +1,14 @@
 import ServiceItem from "../models/serviceItem.model.js";
 
-// Get all service items
+// =============================
+// GET ALL SERVICE ITEMS (All service item details)
+// =============================
+// [GET] /api/services
 export const getAllServiceItems = async (req, res, next) => {
   try {
     const serviceItems = await ServiceItem.find().sort({ createdAt: -1 });
+
+    // Fetch successful
     res.status(200).json({
       success: true,
       message: "All service items retrieved successfully",
@@ -14,7 +19,10 @@ export const getAllServiceItems = async (req, res, next) => {
   }
 };
 
-// Create a new service item
+// =============================
+// CREATE NEW SERVICE ITEM
+// =============================
+// [POST] /api/services
 export const createServiceItem = async (req, res, next) => {
   try {
     const { name, description, hourlyRate } = req.body;
@@ -40,7 +48,10 @@ export const createServiceItem = async (req, res, next) => {
   }
 };
 
-// Update a service item
+// =============================
+// UPDATE SERVICE ITEM BY ID
+// =============================
+// [PUT] /api/services/:id
 export const updateServiceItem = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -67,7 +78,10 @@ export const updateServiceItem = async (req, res, next) => {
   }
 };
 
-// Delete a service item
+// =============================
+// DELETE SERVICE ITEM BY ID
+// =============================
+// [DELETE] /api/services/:id
 export const deleteServiceItem = async (req, res, next) => {
   try {
     const { id } = req.params;

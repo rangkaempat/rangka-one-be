@@ -1,6 +1,5 @@
 import { Router } from "express";
 import {
-  createUser,
   deleteUser,
   getUser,
   getUsers,
@@ -15,7 +14,6 @@ const userRouter = Router();
 // /api/users
 userRouter.get("/", authorize, authorizeAdmin, getUsers); // Admin Only
 userRouter.get("/:id", authorize, authorizeSelfOrAdmin, getUser); // Self or Admin Only
-userRouter.post("/", createUser); // Public
 userRouter.put("/:id", authorize, authorizeSelfOrAdmin, updateUser); // Self or Admin Only
 userRouter.delete("/:id", authorize, authorizeSelfOrAdmin, deleteUser); // Self or Admin Only
 

@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
+    // 🧑 User Identity & Personalization
     name: {
       type: String,
       required: [true, "User Name is required"],
@@ -9,6 +10,8 @@ const userSchema = new mongoose.Schema(
       minLength: 2,
       maxLength: 50,
     },
+
+    // 🔐 Security & Authentication
     email: {
       type: String,
       required: [true, `User Email is required`],

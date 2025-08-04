@@ -2,6 +2,8 @@
 
 A backend system for managing project costings at Rangka Empat Studio. Allows authenticated users to create, update, and manage cost estimates using predefined service items, hourly rates, and client/project details.
 
+Frontend: [Costing System FE](https://github.com/hazimdanishhh/costing-frontend)
+
 ---
 
 ## 📚 Table of Contents
@@ -48,8 +50,8 @@ A backend system for managing project costings at Rangka Empat Studio. Allows au
 1. **Clone the repo**
 
    ```bash
-   git clone https://github.com/your-org/rangka-costing-system.git
-   cd rangka-costing-system
+   git clone https://github.com/hazimdanishhh/costing-system
+   cd costing-system
    ```
 
 2. **Install dependencies**

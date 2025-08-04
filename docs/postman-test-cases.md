@@ -215,14 +215,14 @@ It includes:
 ```json
 {
   "title": "Update user (self or admin)",
-  "method": "PUT",
+  "method": "PATCH",
   "url": "/api/users/<USER_ID>",
   "headers": {
     "Authorization": "Bearer <USER_TOKEN>"
   },
   "body": {
-    "name": "updatedUser",
-    "email": "updated@example.com"
+    "name": "Test User",
+    "username": "updatedUserName"
   }
 }
 ```

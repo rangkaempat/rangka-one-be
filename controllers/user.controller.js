@@ -38,16 +38,23 @@ export const getUser = async (req, res, next) => {
 };
 
 // =============================
-//  EDIT USER DETAILS (name, email, password)
+// EDIT USER DETAILS (name, username, email, password)
+//
+// Normal users will only be able to edit:
+// - Name
+// - Username
+// - Email
+// - Password
 // =============================
-// [PUT] /api/users/:id
+// [PATCH] /api/users/:id
 export const updateUser = async (req, res, next) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, username, email, password } = req.body;
 
     // Update user details
     const updates = {};
     if (name) updates.name = name;
+    if (username) updates.username = username;
     if (email) updates.email = email;
     if (password) {
       updates.password = await bcrypt.hash(password, 10);
@@ -73,6 +80,14 @@ export const updateUser = async (req, res, next) => {
       data: updatedUser,
     });
   } catch (error) {
+    // Handle duplicate key error (email, username, etc.)
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyValue)[0]; // e.g. 'email'
+      const duplicateError = new Error(`${field} already in use`);
+      duplicateError.statusCode = 400;
+      return next(duplicateError);
+    }
+
     next(error);
   }
 };

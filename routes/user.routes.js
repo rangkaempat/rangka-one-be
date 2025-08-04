@@ -14,7 +14,7 @@ const userRouter = Router();
 // /api/users
 userRouter.get("/", authorize, authorizeAdmin, getUsers); // Admin Only
 userRouter.get("/:id", authorize, authorizeSelfOrAdmin, getUser); // Self or Admin Only
-userRouter.put("/:id", authorize, authorizeSelfOrAdmin, updateUser); // Self or Admin Only
+userRouter.patch("/:id", authorize, authorizeSelfOrAdmin, updateUser); // Self or Admin Only
 userRouter.delete("/:id", authorize, authorizeSelfOrAdmin, deleteUser); // Self or Admin Only
 
 export default userRouter;

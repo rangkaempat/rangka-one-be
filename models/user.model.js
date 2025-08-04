@@ -10,6 +10,13 @@ const userSchema = new mongoose.Schema(
       minLength: 2,
       maxLength: 50,
     },
+    username: {
+      type: String,
+      unique: true,
+      sparse: true,
+      lowercase: true,
+      trim: true,
+    },
 
     // 🔐 Security & Authentication
     email: {
@@ -29,6 +36,31 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ["user", "admin"],
       default: "user",
+    },
+
+    // 🏢 Company/Organization Info
+    companyId: {
+      type: String,
+      unique: true,
+      trim: true,
+      uppercase: true,
+    },
+    department: {
+      type: String,
+      enum: [
+        "Business Development & Sales",
+        "Accounting & Finance",
+        "Human Resource",
+        "Production & Operations",
+        "Group Executive Chairman's (GEC's) Office",
+        "Strategic Planning & Corporate Affairs",
+        "Corporate Communications",
+      ],
+      trim: true,
+    },
+    position: {
+      type: String,
+      trim: true,
     },
   },
   { timestamps: true }

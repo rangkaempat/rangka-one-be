@@ -1,71 +1,61 @@
-import mongoose from "mongoose";
+import { DataTypes } from "sequelize";
+import sequelize from "../config/db.js";
 
-const userSchema = new mongoose.Schema(
+const User = sequelize.define(
+  "User",
   {
-    // 🧑 User Identity & Personalization
+    // Identity
     name: {
-      type: String,
-      required: [true, "User Name is required"],
-      trim: true, //Trim empty spaces in string
-      minLength: 2,
-      maxLength: 50,
+      type: DataTypes.STRING(50),
+      allowNull: false,
     },
     username: {
-      type: String,
+      type: DataTypes.STRING,
       unique: true,
-      sparse: true,
-      lowercase: true,
-      trim: true,
+      allowNull: true,
     },
 
-    // 🔐 Security & Authentication
+    // Auth
     email: {
-      type: String,
-      required: [true, `User Email is required`],
+      type: DataTypes.STRING,
+      allowNull: false,
       unique: true,
-      trim: true,
-      lowercase: true,
-      match: [/\S+@\S+\.\S+/, `Please fill a valid email address`],
+      validate: { isEmail: true },
     },
     password: {
-      type: String,
-      required: [true, `User password is required`],
-      minLength: 6,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     role: {
-      type: String,
-      enum: ["user", "admin"],
-      default: "user",
+      type: DataTypes.ENUM("user", "admin"),
+      defaultValue: "user",
     },
 
-    // 🏢 Company/Organization Info
+    // Company Info
     companyId: {
-      type: String,
+      type: DataTypes.STRING,
       unique: true,
-      trim: true,
-      uppercase: true,
+      allowNull: true,
     },
     department: {
-      type: String,
-      enum: [
+      type: DataTypes.ENUM(
         "Business Development & Sales",
         "Accounting & Finance",
         "Human Resource",
         "Production & Operations",
         "Group Executive Chairman's (GEC's) Office",
         "Strategic Planning & Corporate Affairs",
-        "Corporate Communications",
-      ],
-      trim: true,
+        "Corporate Communications"
+      ),
     },
     position: {
-      type: String,
-      trim: true,
+      type: DataTypes.STRING,
+      allowNull: true,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
-
-const User = mongoose.model(`User`, userSchema);
 
 export default User;

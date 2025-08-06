@@ -8,12 +8,13 @@ import bodyParser from "body-parser";
 import authRouter from "./routes/auth.routes.js";
 import userRouter from "./routes/user.routes.js";
 import costingRouter from "./routes/costing.routes.js";
-import connectDatabase from "./database/mongodb.js";
 import serviceItemRouter from "./routes/serviceItem.routes.js";
 import errorMiddleware from "./middlewares/error.middleware.js";
 import { generalLimiter } from "./middlewares/rateLimiter.middleware.js";
 import adminRouter from "./routes/admin.routes.js";
+import { connectDB } from "./config/db.js";
 
+connectDB();
 const app = express();
 
 // Middleware
@@ -43,5 +44,4 @@ const PORT = process.env.PORT;
 
 app.listen(PORT, async () => {
   console.log(`Server running on port: http://localhost:${PORT}`);
-  await connectDatabase();
 });

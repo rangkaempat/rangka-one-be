@@ -14,15 +14,12 @@ const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN;
 // =============================
 // [POST] /api/auth/register
 export const register = async (req, res, next) => {
-  const session = await mongoose.startSession();
-  session.startTransaction();
-
   try {
     // Receive request
     const { name, email, password } = req.body;
 
     // Check if user email already exists
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ where: { email } });
 
     if (existingUser) {
       const error = new Error("User already exists");
@@ -35,19 +32,14 @@ export const register = async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     // Create new user
-    const newUsers = await User.create(
-      [{ name, email, password: hashedPassword }],
-      { session }
-    );
+    const newUsers = await User.create([
+      { name, email, password: hashedPassword },
+    ]);
 
     // Create token
     const token = jwt.sign({ userId: newUsers[0]._id }, JWT_SECRET, {
       expiresIn: JWT_EXPIRES_IN,
     });
-
-    // Commit transaction to database
-    await session.commitTransaction();
-    session.endSession();
 
     // Return success message
     res.status(201).json({
@@ -59,8 +51,6 @@ export const register = async (req, res, next) => {
       },
     });
   } catch (error) {
-    await session.abortTransaction();
-    session.endSession();
     next(error);
   }
 };

@@ -68,14 +68,14 @@ export const register = async (req, res, next) => {
       { transaction }
     );
 
-    // --- Create tokens with session id (sid) ---
+    // --- Create tokens with session id (sessionId) ---
     const sessionId = uuidv4();
-    const accessPayload = { userId, email: newUser.email };
+    const accessPayload = { userId, sessionId };
     const accessToken = jwt.sign(accessPayload, JWT_SECRET_ACCESS, {
       expiresIn: JWT_ACCESS_EXPIRES_IN,
     });
 
-    const refreshPayload = { userId, sid: sessionId };
+    const refreshPayload = { userId, sessionId };
     const refreshToken = jwt.sign(refreshPayload, JWT_SECRET_REFRESH, {
       expiresIn: JWT_REFRESH_EXPIRES_IN,
     });
@@ -128,44 +128,52 @@ export const login = async (req, res, next) => {
   const transaction = await sequelize.transaction();
   try {
     const { email, password } = req.body;
-    if (!email || !password)
+    if (!email || !password) {
       return res
         .status(400)
         .json({ success: false, message: "email and password required" });
+    }
 
     const user = await User.findOne({ where: { email } });
-    if (!user)
+    if (!user) {
       return res
         .status(404)
         .json({ success: false, message: "User not found" });
+    }
 
     const isPasswordValid = await bcrypt.compare(password, user.password_hash);
-    if (!isPasswordValid)
+    if (!isPasswordValid) {
       return res
         .status(401)
         .json({ success: false, message: "Invalid password" });
+    }
 
-    // Create tokens with session id (sid)
+    // ✅ Create DB session
     const sessionId = uuidv4();
-    const accessPayload = { userId: user.id, email: user.email };
-    const accessToken = jwt.sign(accessPayload, JWT_SECRET_ACCESS, {
-      expiresIn: JWT_ACCESS_EXPIRES_IN,
-    });
 
-    const refreshPayload = { userId: user.id, sid: sessionId };
-    const refreshToken = jwt.sign(refreshPayload, JWT_SECRET_REFRESH, {
-      expiresIn: JWT_REFRESH_EXPIRES_IN,
-    });
+    // ✅ Access token contains BOTH userId + sessionId (no sensitive info like email)
+    const accessToken = jwt.sign(
+      { userId: user.id, sessionId },
+      JWT_SECRET_ACCESS,
+      { expiresIn: JWT_ACCESS_EXPIRES_IN }
+    );
 
-    // Hash refresh token for DB storage
+    // ✅ Refresh token also contains BOTH
+    const refreshToken = jwt.sign(
+      { userId: user.id, sessionId },
+      JWT_SECRET_REFRESH,
+      { expiresIn: JWT_REFRESH_EXPIRES_IN }
+    );
+
+    // ✅ Hash refresh token for DB storage
     const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
 
-    // Compute expiry ms
+    // ✅ Expiry times
     const accessExpiryMs = ms(JWT_ACCESS_EXPIRES_IN) || 15 * 60 * 1000;
     const refreshExpiryMs =
       ms(JWT_REFRESH_EXPIRES_IN) || 7 * 24 * 60 * 60 * 1000;
 
-    // Save session
+    // ✅ Save session in DB
     await Session.create(
       {
         id: sessionId,
@@ -179,13 +187,13 @@ export const login = async (req, res, next) => {
       { transaction }
     );
 
-    // Update last_login_at
+    // ✅ Update last login
     user.last_login_at = new Date();
     await user.save({ transaction });
 
     await transaction.commit();
 
-    // Set cookies (unhashed tokens for client)
+    // ✅ Set secure cookies
     res.cookie("accessToken", accessToken, cookieOptions(accessExpiryMs));
     res.cookie("refreshToken", refreshToken, cookieOptions(refreshExpiryMs));
 
@@ -195,7 +203,6 @@ export const login = async (req, res, next) => {
       message: "User logged in successfully",
       user: userWithoutPassword,
     });
-    console.log(`User ${email} logged in from ${req.ip}`);
   } catch (error) {
     await transaction.rollback();
     next(error);
@@ -219,7 +226,7 @@ export const logout = async (req, res, next) => {
         .json({ success: true, message: "User logged out" });
     }
 
-    // Try to decode refresh JWT to get sid (and userId as fallback)
+    // Try to decode refresh JWT to get sessionId (and userId as fallback)
     let decoded = null;
     try {
       decoded = jwt.verify(refreshToken, JWT_SECRET_REFRESH);
@@ -232,11 +239,11 @@ export const logout = async (req, res, next) => {
         .json({ success: true, message: "User logged out" });
     }
 
-    // Preferred path: revoke specific session by sid
-    if (decoded?.sid) {
+    // Preferred path: revoke specific session by sessionId
+    if (decoded?.sessionId) {
       const session = await Session.findOne({
         where: {
-          id: decoded.sid,
+          id: decoded.sessionId,
           revokedAt: null,
           expiresAt: { [Op.gt]: new Date() },
         },
@@ -265,7 +272,7 @@ export const logout = async (req, res, next) => {
         }
       } else {
         // No matching session found (already revoked/expired) - ok
-        console.warn("No active session found for provided sid.");
+        console.warn("No active session found for provided sessionId.");
       }
     } else if (decoded?.userId) {
       // Fallback for legacy tokens: limit candidate sessions to user's recent active sessions
@@ -290,9 +297,9 @@ export const logout = async (req, res, next) => {
         }
       }
     } else {
-      // No sid and no userId in token (very unexpected) - just clear cookies
+      // No sessionId and no userId in token (very unexpected) - just clear cookies
       console.warn(
-        "Refresh token missing sid and userId; cannot target session."
+        "Refresh token missing sessionId and userId; cannot target session."
       );
     }
 
@@ -309,10 +316,11 @@ export const logout = async (req, res, next) => {
 };
 
 // =============================
-// REFRESH ACCESS TOKEN
+// REFRESH ACCESS TOKEN (Rotation)
 // =============================
 // [POST] /api/auth/refresh-token
 export const refreshAccessToken = async (req, res, next) => {
+  const transaction = await sequelize.transaction();
   try {
     const rawRefreshToken = req.cookies?.refreshToken;
 
@@ -323,112 +331,144 @@ export const refreshAccessToken = async (req, res, next) => {
       });
     }
 
-    // Verify refresh token JWT and extract payload
+    // Verify JWT signature
     let decoded;
     try {
       decoded = jwt.verify(rawRefreshToken, JWT_SECRET_REFRESH);
-    } catch (err) {
-      // Invalid or expired token
+    } catch {
       return res.status(403).json({
         success: false,
         message: "Invalid or expired refresh token",
       });
     }
 
-    const { userId, sid } = decoded;
-
-    if (!userId || !sid) {
+    const { userId, sessionId } = decoded;
+    if (!userId || !sessionId) {
       return res.status(403).json({
         success: false,
         message: "Invalid refresh token payload",
       });
     }
 
-    // Find session by sid
+    // Look up session & lock row to avoid race conditions
     const session = await Session.findOne({
       where: {
-        id: sid,
+        id: sessionId,
         userId,
         revokedAt: null,
         expiresAt: { [Op.gt]: new Date() },
       },
-      include: [{ model: User, attributes: ["id", "email", "role"] }],
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: ["id", "email", "role"],
+        },
+      ],
+      transaction,
+      lock: transaction.LOCK.UPDATE, // Prevent concurrent refreshes
     });
 
-    if (!session || !session.User) {
+    if (!session || !session.user) {
+      await transaction.rollback();
       return res.status(403).json({
         success: false,
-        message: "Session not found or revoked/expired",
+        message: "Session not found or expired",
       });
     }
 
-    // Verify the refresh token matches the hashed token stored
+    // Verify refresh token matches stored hash
     const tokenMatches = await bcrypt.compare(
       rawRefreshToken,
       session.refreshToken
     );
     if (!tokenMatches) {
-      // Possible token theft or reuse
-      await session.update({
-        revokedAt: new Date(),
-        revokedReason: "Refresh token mismatch - possible theft",
-      });
+      // Mark stolen session
+      await session.update(
+        {
+          revokedAt: new Date(),
+          revokedReason: "Refresh token mismatch - possible theft",
+        },
+        { transaction }
+      );
+      await transaction.commit();
       return res.status(403).json({
         success: false,
         message: "Refresh token mismatch",
       });
     }
 
-    // All good: Generate new tokens
-    const newAccessToken = jwt.sign(
-      {
-        userId: session.User.id,
-        email: session.User.email,
-        role: session.User.role,
-      },
-      JWT_SECRET_ACCESS,
-      { expiresIn: JWT_ACCESS_EXPIRES_IN }
-    );
-
-    // Create a new session for the rotated refresh token
+    // Create new session ID
     const newSessionId = uuidv4();
-    const newRefreshToken = jwt.sign(
-      { userId: session.User.id, sid: newSessionId },
-      JWT_SECRET_REFRESH,
-      { expiresIn: JWT_REFRESH_EXPIRES_IN }
-    );
+    const accessPayload = {
+      userId: session.user.id,
+      email: session.user.email,
+      role: session.user.role,
+      sessionId: newSessionId, // Always consistent
+    };
+    const refreshPayload = {
+      userId: session.user.id,
+      sessionId: newSessionId,
+    };
+
+    const newAccessToken = jwt.sign(accessPayload, JWT_SECRET_ACCESS, {
+      expiresIn: JWT_ACCESS_EXPIRES_IN,
+    });
+    const newRefreshToken = jwt.sign(refreshPayload, JWT_SECRET_REFRESH, {
+      expiresIn: JWT_REFRESH_EXPIRES_IN,
+    });
 
     const hashedNewRefreshToken = await bcrypt.hash(newRefreshToken, 10);
     const refreshExpiryMs =
       ms(JWT_REFRESH_EXPIRES_IN) || 7 * 24 * 60 * 60 * 1000;
     const accessExpiryMs = ms(JWT_ACCESS_EXPIRES_IN) || 15 * 60 * 1000;
 
-    // Revoke old session
-    await session.update({
-      revokedAt: new Date(),
-      revokedReason: "Rotated refresh token",
-    });
+    // Save new session first
+    await Session.create(
+      {
+        id: newSessionId,
+        userId: session.user.id,
+        refreshToken: hashedNewRefreshToken,
+        ipAddress: req.ip,
+        userAgent: req.headers["user-agent"] || null,
+        expiresAt: new Date(Date.now() + refreshExpiryMs),
+        createdAt: new Date(),
+      },
+      { transaction }
+    );
 
-    // Save new session
-    await Session.create({
-      id: newSessionId,
-      userId: session.User.id,
-      refreshToken: hashedNewRefreshToken,
-      ipAddress: req.ip,
-      userAgent: req.headers["user-agent"] || null,
-      expiresAt: new Date(Date.now() + refreshExpiryMs),
-      createdAt: new Date(),
-    });
+    // Revoke old session after creating new one
+    await session.update(
+      {
+        revokedAt: new Date(),
+        revokedReason: "Rotated refresh token",
+      },
+      { transaction }
+    );
 
-    // Set new cookies
-    res.cookie("accessToken", newAccessToken, cookieOptions(accessExpiryMs));
-    res.cookie("refreshToken", newRefreshToken, cookieOptions(refreshExpiryMs));
+    await transaction.commit();
+
+    // Set cookies with stronger defaults
+    const prod = process.env.NODE_ENV === "production";
+    res.cookie("accessToken", newAccessToken, {
+      httpOnly: true,
+      secure: prod,
+      sameSite: prod ? "strict" : "lax",
+      maxAge: accessExpiryMs,
+    });
+    res.cookie("refreshToken", newRefreshToken, {
+      httpOnly: true,
+      secure: prod,
+      sameSite: prod ? "strict" : "lax",
+      maxAge: refreshExpiryMs,
+    });
 
     return res.status(200).json({
       success: true,
       message: "Access token refreshed successfully",
     });
   } catch (error) {
+    await transaction.rollback();
     next(error);
   }
 };

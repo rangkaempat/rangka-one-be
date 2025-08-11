@@ -16,7 +16,7 @@ export const generalLimiter = rateLimit({
 // Stricter limiter for sensitive routes like login
 export const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 10, // 10 attempts per 15 minutes
+  max: 50, // 10 attempts per 15 minutes
   message: {
     success: false,
     message: "Too many login attempts. Please try again later.",

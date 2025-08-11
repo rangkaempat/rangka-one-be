@@ -12,6 +12,9 @@ import authorizeAdmin from "../middlewares/authAdmin.middleware.js";
 
 const userRouter = Router();
 
+// Self: Get current user
+userRouter.get("/me", authenticateUser, getCurrentUser);
+
 // Admin Only: Get list of all users
 userRouter.get("/", authenticateUser, authorizeAdmin, getUsers);
 
@@ -25,9 +28,6 @@ userRouter.patch("/:id", authenticateUser, updateUser);
 userRouter.delete("/:id", authenticateUser, deleteUser);
 
 // ===================
-
-// Self: Get current user
-userRouter.get("/me", authenticateUser, getCurrentUser);
 
 // Self: Update current user
 // userRouter.patch("/me", authenticateUser, updateCurrentUser);

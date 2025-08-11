@@ -18,7 +18,11 @@ export const connectDB = async () => {
     await sequelize.authenticate();
     console.log("Connected to MySQL database!");
 
-    await sequelize.sync({ alter: true });
+    // await sequelize.sync({ force: true }); // !!! ONLY FOR DROPPING EXISTING TABLES AND DATA, CREATING NEW TABLES
+    // await sequelize.sync({ alter: true }); // !!! ONLY IN DEVELOPMENT TO ALTER EXISTING TABLE FIELDS
+
+    await sequelize.sync();
+
     console.log("✅ Models synchronized");
   } catch (error) {
     console.error("Database connection failed:", error);

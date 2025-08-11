@@ -5,14 +5,13 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
-import authRouter from "./routes/auth.routes.js";
-import userRouter from "./routes/user.routes.js";
-import costingRouter from "./routes/costing.routes.js";
-import serviceItemRouter from "./routes/serviceItem.routes.js";
-import errorMiddleware from "./middlewares/error.middleware.js";
-import { generalLimiter } from "./middlewares/rateLimiter.middleware.js";
-import adminRouter from "./routes/admin.routes.js";
+import authRouter from "./core/routes/auth.routes.js";
+import userRouter from "./core/routes/user.routes.js";
+import errorMiddleware from "./core/middlewares/error.middleware.js";
+import { generalLimiter } from "./core/middlewares/rateLimiter.middleware.js";
+import adminRouter from "./core/routes/admin.routes.js";
 import { connectDB } from "./config/db.js";
+import moduleRouter from "./core/routes/module.routes.js";
 
 connectDB();
 const app = express();
@@ -27,14 +26,13 @@ app.use(
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(generalLimiter); // Global rate limiter
+// app.use(generalLimiter); // Global rate limiter
 
 // Routes
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
-app.use("/api/costing", costingRouter);
-app.use("/api/services", serviceItemRouter);
 app.use("/api/admin", adminRouter);
+app.use("/api/modules", moduleRouter);
 
 // Global Error Middlewares must be after Routes
 app.use(errorMiddleware);

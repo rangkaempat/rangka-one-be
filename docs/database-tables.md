@@ -37,17 +37,17 @@
 
 ## Core Module New
 
-| Table             | Fields                                                                                                                                                                                    |
-| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **users**         | id (PK), name, username, email, password_hash, role (`admin`, `user`, `manager`, etc.), status (`active`, `inactive`, `suspended`), created_at, updated_at, last_login_at                 |
-| **permissions**   | id (PK), user_id (FK), module_id (FK), feature_id (FK), access_level (`create`, `read`, `update`, `delete`), scope (`all`, `department`, `self`), granted_by (FK to users.id), created_at |
-| **modules**       | id (PK), name, code (short unique), description, is_core (boolean), created_at                                                                                                            |
-| **features**      | id (PK), module_id (FK), name, code, description, created_at                                                                                                                              |
-| **notifications** | id (PK), user_id (FK), title, message, type (`info`, `warning`, `error`, `success`), read_status (boolean), created_at, read_at                                                           |
-| **audit_logs**    | id (PK), user_id (FK), module_id (FK), feature_id (FK), action, target_id, target_type, details (JSON), created_at                                                                        |
-| **settings**      | id (PK), key, value, description, created_at, updated_at                                                                                                                                  |
-| **attachments**   | id (PK), uploaded_by (FK), module_id (FK), feature_id (FK), file_name, file_path, file_type, size, created_at                                                                             |
-| **sessions**      | id (PK), user_id (FK), refresh_token, ip_address, user_agent, expires_at, revoked_at, created_at                                                                                          |
+| Table             | Fields                                                                                                                                                                              |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **users**         | id (PK), name, username, email, passwordHash, role (`admin`, `user`), status (`active`, `inactive`, `suspended`), lastLoginAt, createdAt, updatedAt                                 |
+| **permissions**   | id (PK), userId (FK), moduleId (FK), featureId (FK), accessLevel (`create`, `read`, `update`, `delete`), scope (`all`, `department`, `self`), grantedBy (FK to users.id), createdAt |
+| **modules**       | id (PK), name, code (short unique), description, is_core (boolean), created_at                                                                                                      |
+| **features**      | id (PK), module_id (FK), name, code, description, created_at                                                                                                                        |
+| **notifications** | id (PK), user_id (FK), title, message, type (`info`, `warning`, `error`, `success`), read_status (boolean), created_at, read_at                                                     |
+| **audit_logs**    | id (PK), user_id (FK), module_id (FK), feature_id (FK), action, target_id, target_type, details (JSON), created_at                                                                  |
+| **settings**      | id (PK), key, value, description, created_at, updated_at                                                                                                                            |
+| **attachments**   | id (PK), uploaded_by (FK), module_id (FK), feature_id (FK), file_name, file_path, file_type, size, created_at                                                                       |
+| **sessions**      | id (PK), user_id (FK), refresh_token, ip_address, user_agent, expires_at, revoked_at, created_at                                                                                    |
 
 ## HR Module New
 

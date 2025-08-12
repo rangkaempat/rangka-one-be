@@ -17,7 +17,7 @@ const User = sequelize.define(
     },
     username: {
       type: DataTypes.STRING(50),
-      allowNull: true, // Nullable because not all users may have usernames
+      allowNull: true,
       unique: true,
     },
     email: {
@@ -28,9 +28,10 @@ const User = sequelize.define(
         isEmail: true,
       },
     },
-    password_hash: {
+    passwordHash: {
       type: DataTypes.STRING(255),
       allowNull: false,
+      field: "password_hash", // DB column
     },
     role: {
       type: DataTypes.ENUM("admin", "user"),
@@ -42,25 +43,28 @@ const User = sequelize.define(
       allowNull: false,
       defaultValue: "active",
     },
-    last_login_at: {
+    lastLoginAt: {
       type: DataTypes.DATE,
       allowNull: true,
+      field: "last_login_at",
     },
-    created_at: {
+    createdAt: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: DataTypes.NOW,
+      field: "created_at",
     },
-    updated_at: {
+    updatedAt: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: DataTypes.NOW,
+      field: "updated_at",
     },
   },
   {
     tableName: "users",
-    timestamps: false, // We're handling created_at & updated_at manually
-    underscored: true, // Matches snake_case DB columns
+    timestamps: false, // We're manually mapping createdAt & updatedAt
+    underscored: true, // Future-proof if you later enable timestamps
   }
 );
 

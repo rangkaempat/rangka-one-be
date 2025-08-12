@@ -3,12 +3,12 @@ import bcrypt from "bcrypt";
 import { Op } from "sequelize";
 
 // =============================
-// GET ALL USERS (Exclude password_hash)
+// GET ALL USERS (Exclude passwordHash)
 // [GET] /api/users/
 export const getUsers = async (req, res, next) => {
   try {
     const users = await User.findAll({
-      attributes: { exclude: ["password_hash"] },
+      attributes: { exclude: ["passwordHash"] },
     });
     res.status(200).json({ success: true, data: users });
   } catch (error) {
@@ -17,13 +17,13 @@ export const getUsers = async (req, res, next) => {
 };
 
 // =============================
-// GET USER BY ID (Exclude password_hash)
+// GET USER BY ID (Exclude passwordHash)
 // [GET] /api/users/:id
 export const getUser = async (req, res, next) => {
   try {
     const id = req.params.id;
     const user = await User.findByPk(id, {
-      attributes: { exclude: ["password_hash"] },
+      attributes: { exclude: ["passwordHash"] },
     });
 
     if (!user) {
@@ -50,7 +50,7 @@ export const getCurrentUser = async (req, res, next) => {
     }
 
     const user = await User.findByPk(userId, {
-      attributes: { exclude: ["password_hash"] },
+      attributes: { exclude: ["passwordHash"] },
     });
 
     if (!user) {
@@ -87,7 +87,7 @@ export const updateUser = async (req, res, next) => {
     if (username !== undefined) updates.username = username;
     if (email !== undefined) updates.email = email;
     if (password !== undefined) {
-      updates.password_hash = await bcrypt.hash(password, 10);
+      updates.passwordHash = await bcrypt.hash(password, 10);
     }
 
     // Check for duplicates on username or email (if changed)
@@ -121,9 +121,9 @@ export const updateUser = async (req, res, next) => {
 
     await user.update(updates);
 
-    // Return updated user excluding password_hash
+    // Return updated user excluding passwordHash
     const updatedUser = await User.findByPk(id, {
-      attributes: { exclude: ["password_hash"] },
+      attributes: { exclude: ["passwordHash"] },
     });
 
     res.status(200).json({

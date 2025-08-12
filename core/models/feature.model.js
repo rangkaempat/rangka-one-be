@@ -11,9 +11,10 @@ const Feature = sequelize.define(
       primaryKey: true,
       autoIncrement: true,
     },
-    module_id: {
+    moduleId: {
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
+      field: "module_id",
       references: {
         model: Module,
         key: "id",

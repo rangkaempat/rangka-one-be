@@ -59,11 +59,11 @@ export const register = async (req, res, next) => {
         name,
         username: username || null,
         email,
-        password_hash: hashedPassword,
+        passwordHash: hashedPassword,
         role: "user",
         status: "active",
-        created_at: new Date(),
-        updated_at: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
       },
       { transaction }
     );
@@ -108,7 +108,7 @@ export const register = async (req, res, next) => {
     res.cookie("accessToken", accessToken, cookieOptions(accessExpiryMs));
     res.cookie("refreshToken", refreshToken, cookieOptions(refreshExpiryMs));
 
-    const { password_hash, ...userWithoutPassword } = newUser.toJSON();
+    const { passwordHash, ...userWithoutPassword } = newUser.toJSON();
     res.status(201).json({
       success: true,
       message: "User registered successfully",
@@ -141,7 +141,7 @@ export const login = async (req, res, next) => {
         .json({ success: false, message: "User not found" });
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password_hash);
+    const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
     if (!isPasswordValid) {
       return res
         .status(401)
@@ -188,7 +188,7 @@ export const login = async (req, res, next) => {
     );
 
     // ✅ Update last login
-    user.last_login_at = new Date();
+    user.lastLoginAt = new Date();
     await user.save({ transaction });
 
     await transaction.commit();
@@ -197,7 +197,7 @@ export const login = async (req, res, next) => {
     res.cookie("accessToken", accessToken, cookieOptions(accessExpiryMs));
     res.cookie("refreshToken", refreshToken, cookieOptions(refreshExpiryMs));
 
-    const { password_hash, ...userWithoutPassword } = user.toJSON();
+    const { passwordHash, ...userWithoutPassword } = user.toJSON();
     res.status(200).json({
       success: true,
       message: "User logged in successfully",
@@ -282,7 +282,7 @@ export const logout = async (req, res, next) => {
           revokedAt: null,
           expiresAt: { [Op.gt]: new Date() },
         },
-        order: [["created_at", "DESC"]],
+        order: [["createdAt", "DESC"]],
         limit: 10, // limit scan to avoid DB-wide scan
       });
 

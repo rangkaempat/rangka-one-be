@@ -23,10 +23,11 @@ const Module = sequelize.define(
       type: DataTypes.TEXT,
       allowNull: true,
     },
-    is_core: {
+    isCore: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false,
+      field: "is_core",
     },
   },
   {

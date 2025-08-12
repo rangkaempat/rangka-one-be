@@ -5,7 +5,7 @@ import { Op } from "sequelize";
 export const getModules = async (req, res, next) => {
   try {
     // Extract query params from URL like /api/modules?code=HR&name=Human
-    const { code, name, is_core } = req.query;
+    const { code, name, isCore } = req.query;
 
     // Build dynamic 'where' object for filtering
     const where = {};
@@ -17,9 +17,9 @@ export const getModules = async (req, res, next) => {
     if (name) {
       where.name = { [Op.like]: `%${name}%` };
     }
-    if (is_core !== undefined) {
+    if (isCore !== undefined) {
       // Because query params are strings, convert to boolean
-      where.is_core = is_core === "true";
+      where.isCore = isCore === "true";
     }
 
     // Query with or without filters
@@ -50,7 +50,7 @@ export const getModuleById = async (req, res, next) => {
 // CREATE new module
 export const createModule = async (req, res, next) => {
   try {
-    const { name, code, description, is_core } = req.body;
+    const { name, code, description, isCore } = req.body;
 
     if (!name || !code) {
       return res
@@ -70,7 +70,7 @@ export const createModule = async (req, res, next) => {
       name,
       code,
       description: description || null,
-      is_core: is_core || false,
+      isCore: isCore || false,
     });
 
     res.status(201).json({ success: true, data: newModule });
@@ -83,7 +83,7 @@ export const createModule = async (req, res, next) => {
 export const updateModule = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { name, code, description, is_core } = req.body;
+    const { name, code, description, isCore } = req.body;
 
     const module = await Module.findByPk(id);
     if (!module) {
@@ -107,7 +107,7 @@ export const updateModule = async (req, res, next) => {
       name: name !== undefined ? name : module.name,
       code: code !== undefined ? code : module.code,
       description: description !== undefined ? description : module.description,
-      is_core: is_core !== undefined ? is_core : module.is_core,
+      isCore: isCore !== undefined ? isCore : module.isCore,
     });
 
     res.status(200).json({ success: true, data: module });
